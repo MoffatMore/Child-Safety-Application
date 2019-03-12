@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleMap.OnPolylineClickListener,LocationListener {
+        GoogleMap.OnPolylineClickListener, LocationListener {
 
     private GoogleMap mMap;
     LocationManager locationManager;
@@ -141,9 +141,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        Log.d("Latitude",""+latitude);
+        Log.d("Latitude", "" + latitude);
         LatLng latLng = new LatLng(latitude, longitude);
         mMap.clear();
+        mMap.setBuildingsEnabled(true);
+        mMap.setTrafficEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.addPolyline(
                 new PolylineOptions()
                         .add(new LatLng(-24.6595773, 25.9162477))
@@ -154,9 +160,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .width(8f)
                         .color(Color.RED)
         );
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(-24.6595773, 25.9162477))
+                .title("First Location")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow))
+        );
         mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
